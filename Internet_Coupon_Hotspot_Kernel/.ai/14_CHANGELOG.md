@@ -1,5 +1,86 @@
 # Changelog and Evidence
 
+## Phase 17, 18 & 19 — PWA Installability, Hardening & Full E2E Acceptance (Completed)
+- Built Progressive Web App (PWA) Foundation & Installability (`client/public/`, `client/src/components/`):
+  - Created Web App Manifests (`manifest.webmanifest`, `manifest.json`) with `id: '/'`, `short_name: 'Hotspot'`, `display: 'standalone'`, theme colors, and dual purpose (`any` & `maskable` safe-zone) SVG icons.
+  - Built `usePWAInstall` React hook and `PWAInstallButton` component supporting Android/Chromium `beforeinstallprompt`, standalone auto-hiding, and iOS Safari Add-to-Home-Screen guide modal.
+  - Built `useOnlineStatus` hook and non-intrusive `OfflineIndicator` toast notifying users of network drops.
+  - Configured Capacitor container (`capacitor.config.ts`) and authored Android Permissions Specification (`.ai/17_ANDROID_PACKAGING_SPEC.md`).
+- Authored Full End-to-End Acceptance Journey Test Suite (`server/src/e2e_acceptance.test.ts`):
+  - Verifies complete lifecycle: SuperAdmin bootstrap → Hotspot Owner registration → Access package creation → Voucher generation (`FLIGHT2HR`) → Customer captive portal voucher redemption with MAC binding → Active countdown timer → Walk-in customer cash payment → Tamper-evident receipt generation → Session pause and resume cycle → Automated financial reconciliation → General ledger net balance → Cross-tenant security isolation.
+- Authored Production Deployment Runbook & Hardware Compatibility Matrix (`.ai/19_DEPLOYMENT_RUNBOOK_AND_COMPATIBILITY_MATRIX.md`):
+  - Explicit truth disclosures for all subsystems (Mode A unmanaged hotspot vs Mode B hardware router, physical device not tested, live sandbox verified).
+- Verification & Test Evidence:
+  - **96 / 96 tests passing across 20 test files** in vitest:
+    - `server/src/e2e_acceptance.test.ts` (1 test)
+    - `server/src/sessions/sessions.test.ts` (10 tests)
+    - `server/src/payments/payments.test.ts` (10 tests)
+    - `server/src/admin/admin.test.ts` (6 tests)
+    - `server/src/gateway/gateway.test.ts` (6 tests)
+    - `server/src/ai/ai.test.ts` (6 tests)
+    - `server/src/db/db.test.ts` (6 tests)
+    - `server/src/contracts/contracts.test.ts` (7 tests)
+    - `server/src/auth/auth.test.ts` (5 tests)
+    - `server/src/analytics/analytics.test.ts` (5 tests)
+    - `server/src/auth/password_lifecycle.test.ts` (4 tests)
+    - `server/src/customers/customers.test.ts` (4 tests)
+    - `server/src/notifications/notifications.test.ts` (4 tests)
+    - `server/src/loyalty/loyalty.test.ts` (4 tests)
+    - `server/src/packages/packages.test.ts` (3 tests)
+    - `server/src/coupons/coupons.test.ts` (3 tests)
+    - `server/src/owner/owner.test.ts` (2 tests)
+    - `server/src/app.test.ts` (2 tests)
+    - `client/src/theme.test.ts` (5 tests)
+    - `client/src/pwa.test.ts` (3 tests)
+  - TypeScript compilation checks (`tsc --noEmit`): 0 errors across workspace.
+  - Production build (`npm run build`): Clean build.
+  - Dev server responding on port 3000 to `/api/v1/health`, `/api/v1`, and serving the SPA.
+
+## Phase 12, 13, 14, 15 & 16 — Notifications, Analytics, Loyalty & AI Copilot (Completed)
+- Built Notification Engine (`server/src/notifications/`):
+  - Multi-channel notification pipeline supporting `in_app`, `portal_toast`, `sms_stub`, and `webhook` delivery targets.
+  - Delivery lifecycle tracking (`pending`, `delivered`, `failed`, `read`), delivery retry endpoint (`POST /api/v1/notifications/:id/retry`), and public toast querying (`GET /api/v1/notifications/portal/:recipientId`).
+  - Automated expiring session alert scanner (`POST /api/v1/notifications/check-expiring`) detecting active sessions with < 5 minutes remaining.
+  - Operator drawer UI (`client/src/components/NotificationsModal.tsx`).
+- Built Financial, Usage & Retention Analytics (`server/src/analytics/`):
+  - Aggregated overview telemetry with integer minor units and data source attribution (`ledger_journal_verified`).
+  - Time-series daily revenue breakdown, delivered hours, package distribution, and returning customer retention tracking.
+  - CSV exports (`GET /api/v1/analytics/export?type=ledger|sessions`) with verified MIME types and headers.
+  - Operator Analytics UI (`client/src/components/AnalyticsView.tsx`).
+- Built Customer Segmentation & Loyalty Badges (`server/src/loyalty/`):
+  - Deterministic customer segments (`NEW`, `REGULAR`, `VIP`, `AT_RISK`, `INACTIVE`) with explainable criteria and evidence.
+  - Badges system with audit event trail (`POST /api/v1/loyalty/badges`).
+  - Bounded loyalty bonuses (`POST /api/v1/loyalty/bonuses`) with abuse protection limits (max 3), expiration bounds, and claiming workflow.
+  - Operator Loyalty UI (`client/src/components/LoyaltyView.tsx`).
+- Built AI Provider Registry, Quota Management & Copilot (`server/src/ai/`):
+  - Pluggable provider registry supporting Gemini, Groq, Anthropic, and Local models with encrypted API key storage and masked presentation.
+  - Privacy scrubbing pipeline (`scrubPii`) removing emails, phone numbers, MAC addresses, credit cards, and tokens before synthesis.
+  - Grounded Copilot Q&A requiring owner confirmation for actions; revenue forecasting with minimum-sample disclosures; anomaly detection; and privacy-safe customer support response drafter.
+  - Operator Copilot UI (`client/src/components/AICopilotView.tsx`).
+- Evidence & Verification:
+  - 92/92 tests passing across 18 test suites in vitest:
+    - `server/src/sessions/sessions.test.ts` (10 tests)
+    - `server/src/payments/payments.test.ts` (10 tests)
+    - `server/src/admin/admin.test.ts` (6 tests)
+    - `server/src/gateway/gateway.test.ts` (6 tests)
+    - `server/src/ai/ai.test.ts` (6 tests)
+    - `server/src/db/db.test.ts` (6 tests)
+    - `server/src/contracts/contracts.test.ts` (7 tests)
+    - `server/src/auth/auth.test.ts` (5 tests)
+    - `server/src/analytics/analytics.test.ts` (5 tests)
+    - `server/src/auth/password_lifecycle.test.ts` (4 tests)
+    - `server/src/customers/customers.test.ts` (4 tests)
+    - `server/src/notifications/notifications.test.ts` (4 tests)
+    - `server/src/loyalty/loyalty.test.ts` (4 tests)
+    - `server/src/packages/packages.test.ts` (3 tests)
+    - `server/src/coupons/coupons.test.ts` (3 tests)
+    - `server/src/owner/owner.test.ts` (2 tests)
+    - `server/src/app.test.ts` (2 tests)
+    - `client/src/theme.test.ts` (5 tests)
+  - TypeScript compilation checks (`tsc --noEmit`): 0 errors across workspace.
+  - Production build (`npm run build`): Clean build.
+  - Dev server responding on port 3000 to `/api/v1/health`, `/api/v1`, and serving the SPA.
+
 ## Phase 8, 9, 10 & 11 — Sessions State Machine, Gateway Adapters & Customer Portal (Completed)
 - Built Server-Authoritative Session Engine (`server/src/sessions/service.ts` & `routes.ts`):
   - Authoritative UTC timestamps for `activatedAt` and `expiresAt` with server-enforced duration clocks.

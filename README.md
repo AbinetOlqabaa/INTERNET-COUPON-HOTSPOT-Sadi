@@ -61,7 +61,7 @@ Starts unified server on `http://0.0.0.0:3000`.
 ```bash
 npm test
 ```
-Executes all 57 unit and integration tests across 12 suites (11 server suites, 1 client suite).
+Executes all 96 unit, integration, PWA, and full E2E acceptance tests across 20 suites (18 server suites, 2 client suites).
 
 ### TypeScript Typecheck
 ```bash
@@ -89,3 +89,4 @@ npm run start
 - `GET /api/v1`: Root module registry.
 - `GET /api/v1/admin/overview`: System and account telemetry.
 - `GET /api/v1/admin/ai/insights`: Privacy-preserving operational AI insights.
+- `GET /manifest.webmanifest`: Progressive Web App (PWA) manifest.

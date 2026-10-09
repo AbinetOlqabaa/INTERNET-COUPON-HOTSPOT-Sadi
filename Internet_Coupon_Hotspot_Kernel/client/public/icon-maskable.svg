@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#102A43" />
+      <stop offset="100%" stop-color="#06121E" />
+    </linearGradient>
+    <linearGradient id="wifiGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+    <linearGradient id="couponGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  <!-- Full-bleed background for maskable cropping -->
+  <rect width="512" height="512" fill="url(#bgGradMask)" />
+  <!-- Scaled content inside safe zone (central 80%) -->
+  <g transform="translate(51, 51) scale(0.8)">
+    <!-- WiFi Signal Arcs -->
+    <path d="M 128 200 A 180 180 0 0 1 384 200" fill="none" stroke="url(#wifiGradMask)" stroke-width="28" stroke-linecap="round" />
+    <path d="M 176 250 A 110 110 0 0 1 336 250" fill="none" stroke="url(#wifiGradMask)" stroke-width="24" stroke-linecap="round" />
+    <circle cx="256" cy="290" r="16" fill="#38BDF8" />
+    <!-- Hotspot Coupon Badge / Ticket -->
+    <g transform="translate(136, 330)">
+      <rect width="240" height="96" rx="18" fill="url(#couponGradMask)" />
+      <!-- Perforations -->
+      <circle cx="0" cy="48" r="14" fill="#0b1a29" />
+      <circle cx="240" cy="48" r="14" fill="#0b1a29" />
+      <!-- Ticket detail line -->
+      <line x1="72" y1="18" x2="72" y2="78" stroke="#064E3B" stroke-width="4" stroke-dasharray="6 6" />
+      <!-- Ticket text or symbol -->
+      <path d="M 112 40 L 210 40 M 112 56 L 190 56 M 112 72 L 160 72" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" />
+      <circle cx="44" cy="48" r="12" fill="#FFFFFF" opacity="0.9" />
+    </g>
+  </g>
+</svg>

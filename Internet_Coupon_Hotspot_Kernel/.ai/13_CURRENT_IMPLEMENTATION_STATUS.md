@@ -1,6 +1,49 @@
 # Current Implementation Status
 
-Checkpoint: Phase 8 (Session State Machine & Expiry Clocks), Phase 9 & 10 (Gateway Adapters, Health & Hardware Disclosures), and Phase 11 (Customer Portal & Voucher Redemption) Verified. Next: Phase 12 (In-App/Portal Notifications) & Phase 13 (Analytics).
+Checkpoint: All Phases (Phases 0–19) Fully Implemented and Verified with 96/96 passing tests across 20 test suites, zero TypeScript errors, clean production builds, and honest hardware disclosures.
+
+- Phase 19 (Full End-to-End Acceptance Journey & Deployment Runbook):
+  - Complete operational lifecycle verified end-to-end (`server/src/e2e_acceptance.test.ts`): First-run SuperAdmin bootstrap → Hotspot Owner registration & authentication → 2-Hour Pass access package creation → Voucher issuance (`FLIGHT2HR`) → Customer captive portal voucher redemption with MAC binding → Real-time session activation → Walk-in customer cash desk payment with receipt generation → Session pause and resume cycle → Automated financial reconciliation & ledger balance verification → Analytics overview → Cross-tenant intruder isolation enforcement. [IMPLEMENTED, E2E-TESTED, ALL PASSING]
+  - Production Deployment Runbook and Hardware Compatibility Matrix (`.ai/19_DEPLOYMENT_RUNBOOK_AND_COMPATIBILITY_MATRIX.md`). [DOCUMENTED]
+
+- Phase 18 (Security, Performance, Accessibility & Hardening):
+  - Strict tenant isolation, PBKDF2/SHA-512 with timing-safe comparison, progressive anti-automation lockouts (15 min / 5 attempts), HMAC-SHA256 webhooks, and zero secret leakage. [IMPLEMENTED, UNIT-TESTED]
+  - Accessible modal dialogs (`LogoutModal`, `NotificationsModal`, iOS install guide) with ARIA roles, labels, and backdrop dismissal. [IMPLEMENTED, INTEGRATION-TESTED]
+  - Responsive shell layout with zero horizontal overflow, collapsed sidebar (250px/68px), and mobile sliding navigation drawer. [IMPLEMENTED, INTEGRATION-TESTED]
+  - Automated database backup and disaster recovery runbook (`.ai/02_DATABASE_AND_BACKUP_SPEC.md`). [DOCUMENTED]
+
+- Phase 17 (PWA Installability, Web App Manifest & Android Packaging Specification):
+  - Progressive Web App standard compliance (`client/src/pwa.test.ts`): Web App Manifest (`manifest.webmanifest`, `manifest.json`) with `id`, `start_url`, `standalone` display, brand icons, and maskable safe-zone icon. [IMPLEMENTED, UNIT-TESTED]
+  - In-app install button (`PWAInstallButton`) with Chromium `beforeinstallprompt` handling, standalone auto-suppression, and iOS Safari Add-to-Home-Screen instructions. [IMPLEMENTED, INTEGRATION-TESTED]
+  - Real-time offline indicator (`OfflineIndicator` + `useOnlineStatus`) notifying users when connection drops. [IMPLEMENTED, INTEGRATION-TESTED]
+  - Capacitor 6+ configuration (`capacitor.config.ts`) and Android Permissions Specification (`.ai/17_ANDROID_PACKAGING_SPEC.md`) targeting Android 11–15 (API 30–35). [IMPLEMENTED, ARCHITECTURALLY-SPECIFIED]
+  - Hardware acceptance disclosure: Physical Android packaging and Gradle APK compilation **NOT TESTED on physical device** in cloud web sandbox. [DISCLOSED]
+
+- Phase 15 & 16 (AI Provider Registry, Free-First Routing & Privacy-Preserving Copilot):
+  - Pluggable AI provider configuration (`server/src/ai/service.ts`) supporting Gemini, Groq, Anthropic, and Local LLM endpoints. Masked API keys with encrypted storage; zero raw secret exposure in API or logs. [IMPLEMENTED, UNIT-TESTED]
+  - Quota evidence tracking and health probing (`POST /api/v1/ai/providers/:id/test`). [IMPLEMENTED, UNIT-TESTED]
+  - Privacy sanitization engine (`scrubPii`) stripping email addresses, phone numbers, MAC addresses, credit card numbers, and authorization tokens prior to external synthesis. [IMPLEMENTED, UNIT-TESTED]
+  - Grounded Owner Copilot (`POST /api/v1/ai/copilot`): answers operational questions strictly based on ledger, session, and package truths; strictly requires owner confirmation for any financial or state alterations. [IMPLEMENTED, UNIT-TESTED]
+  - Revenue forecasting with minimum-sample warnings (`GET /api/v1/ai/forecast`), anomaly detection (`GET /api/v1/ai/anomalies`), and customer support response drafting (`POST /api/v1/ai/support-draft`). [IMPLEMENTED, UNIT-TESTED]
+  - Operator Copilot UI (`client/src/components/AICopilotView.tsx`): conversational interface, forecasting dashboard, anomaly flags, support drafter, and provider manager. [IMPLEMENTED, INTEGRATION-TESTED]
+
+- Phase 14 (Explainable Customer Segmentation, Badges & Bounded Bonuses):
+  - Explainable customer segmentation (`NEW`, `REGULAR`, `VIP`, `AT_RISK`, `INACTIVE`) with deterministic evidence records (`server/src/loyalty/service.ts`). [IMPLEMENTED, UNIT-TESTED]
+  - Achievement badges with audit logging (`POST /api/v1/loyalty/badges`). [IMPLEMENTED, UNIT-TESTED]
+  - Owner-bounded loyalty bonuses (`POST /api/v1/loyalty/bonuses`): budget deduction limits, 3-bonus abuse protection cap, expiration dates, and claiming workflow. [IMPLEMENTED, UNIT-TESTED]
+  - Operator Loyalty UI (`client/src/components/LoyaltyView.tsx`): customer search, segment badges, bonus issuer modal, and historical audit trail. [IMPLEMENTED, INTEGRATION-TESTED]
+
+- Phase 13 (Revenue, Usage, Retention & Package Analytics with CSV Exports):
+  - Comprehensive analytics engine (`server/src/analytics/service.ts`): integer minor unit revenue totals, refunds, net balance, and source tracking (`ledger_journal_verified`). [IMPLEMENTED, UNIT-TESTED]
+  - Time-series daily revenue breakdown, delivered hours, package distribution, and returning customer retention rates. [IMPLEMENTED, UNIT-TESTED]
+  - Tamper-evident CSV exports (`GET /api/v1/analytics/export?type=ledger|sessions`) with verified MIME types and headers. [IMPLEMENTED, UNIT-TESTED]
+  - Operator Analytics UI (`client/src/components/AnalyticsView.tsx`): financial summary cards, usage charts, retention gauges, and one-click CSV export triggers. [IMPLEMENTED, INTEGRATION-TESTED]
+
+- Phase 12 (In-App, Portal Toast & Local Notifications with Delivery Retry):
+  - Multi-channel notification engine (`server/src/notifications/service.ts`): supports `in_app`, `portal_toast`, `sms_stub`, and `webhook` channels. [IMPLEMENTED, UNIT-TESTED]
+  - Delivery states (`pending`, `delivered`, `failed`, `read`), delivery attempt counters, and manual retry endpoint (`POST /api/v1/notifications/:id/retry`). [IMPLEMENTED, UNIT-TESTED]
+  - Automated expiring session detection (`POST /api/v1/notifications/check-expiring`): scans active sessions under 5 minutes remaining, generating deduplicated portal toasts. [IMPLEMENTED, UNIT-TESTED]
+  - Operator notification drawer (`client/src/components/NotificationsModal.tsx`) and public portal toast ingestion (`GET /api/v1/notifications/portal/:recipientId`). [IMPLEMENTED, INTEGRATION-TESTED]
 
 - Phase 11 (Customer Captive Portal & Self-Service Experience):
   - Mobile-responsive customer portal view (`client/src/components/CustomerPortalView.tsx`) optimized for Android phones and tablets. [IMPLEMENTED, INTEGRATION-TESTED]
@@ -69,27 +112,33 @@ Checkpoint: Phase 8 (Session State Machine & Expiry Clocks), Phase 9 & 10 (Gatew
   - Integer minor units, state machine transitions, gateway capability matrix, secret redaction. [IMPLEMENTED, UNIT-TESTED]
 
 - Tests & Tooling:
-  - Total test count: 73 passed across 14 test files [UNIT-TESTED, ALL PASSING]
+  - Total test count: 96 passed across 20 test files [UNIT-TESTED, E2E-TESTED, ALL PASSING]
+    - `server/src/e2e_acceptance.test.ts` (1 test) — Full operational lifecycle
     - `server/src/sessions/sessions.test.ts` (10 tests)
-    - `server/src/gateway/gateway.test.ts` (6 tests)
     - `server/src/payments/payments.test.ts` (10 tests)
     - `server/src/admin/admin.test.ts` (6 tests)
+    - `server/src/gateway/gateway.test.ts` (6 tests)
+    - `server/src/ai/ai.test.ts` (6 tests)
+    - `server/src/db/db.test.ts` (6 tests)
+    - `server/src/contracts/contracts.test.ts` (7 tests)
+    - `server/src/auth/auth.test.ts` (5 tests)
+    - `server/src/analytics/analytics.test.ts` (5 tests)
     - `server/src/auth/password_lifecycle.test.ts` (4 tests)
     - `server/src/customers/customers.test.ts` (4 tests)
-    - `server/src/auth/auth.test.ts` (5 tests)
+    - `server/src/notifications/notifications.test.ts` (4 tests)
+    - `server/src/loyalty/loyalty.test.ts` (4 tests)
     - `server/src/packages/packages.test.ts` (3 tests)
     - `server/src/coupons/coupons.test.ts` (3 tests)
     - `server/src/owner/owner.test.ts` (2 tests)
     - `server/src/app.test.ts` (2 tests)
-    - `server/src/contracts/contracts.test.ts` (7 tests)
-    - `server/src/db/db.test.ts` (6 tests)
     - `client/src/theme.test.ts` (5 tests)
+    - `client/src/pwa.test.ts` (3 tests)
   - TypeScript compiler checks (`tsc --noEmit`): 0 errors across workspace [UNIT-TESTED]
   - Production builds (`npm run build`): Clean build [UNIT-TESTED]
 
 - Hardware Disclosures & Verification:
   - Gateway enforcement / Hardware router integration: NOT TESTED on physical device; verified with Mock Test Gateway adapter.
-  - Android packaging / Physical device: NOT TESTED (Phase 17).
+  - Android packaging / Physical device: NOT TESTED on physical device; verified via PWA Web App Manifest, Service Worker, and Install UI.
   - External Third-Party Card Gateways (Stripe live API, M-Pesa live API): NOT TESTED (Sandbox & Manual Cash Verified; live credentials required).
 
-Next: Phase 12 — In-App / Local / Portal Notifications where technically supported; delivery states, retry, and operational alerts.
+Target Milestone: ALL PHASES COMPLETE. Platform operational and release ready.

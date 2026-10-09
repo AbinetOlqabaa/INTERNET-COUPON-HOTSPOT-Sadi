@@ -479,7 +479,7 @@ export function AICopilotView({ token, currency = 'USD', onFeedback }: AICopilot
             {supportDraft && (
               <div style={{ marginTop: '1.25rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '1rem' }}>
                 <h4 style={{ margin: '0 0 0.5rem 0', color: '#10b981' }}>Proposed Draft (PII Redacted)</h4>
-                <p style={{ margin: 0, whiteHeight: '1.5', whiteSpace: 'pre-line' }}>{supportDraft}</p>
+                <p style={{ margin: 0, lineHeight: '1.5', whiteSpace: 'pre-line' }}>{supportDraft}</p>
                 <div style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>
                   ⚠️ Always verify and personalize before sending to the customer. Never include administrative passwords.
                 </div>

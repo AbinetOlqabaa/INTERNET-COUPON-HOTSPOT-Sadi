@@ -8,6 +8,8 @@ import { AnalyticsView } from './components/AnalyticsView.js';
 import { LoyaltyView } from './components/LoyaltyView.js';
 import { AICopilotView } from './components/AICopilotView.js';
 import { NotificationsModal } from './components/NotificationsModal.js';
+import { PWAInstallButton } from './components/PWAInstallButton.js';
+import { OfflineIndicator } from './components/OfflineIndicator.js';
 
 const API = import.meta.env.VITE_API_BASE_URL ?? '';
 
@@ -710,6 +712,7 @@ export function App() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <PWAInstallButton compact />
             <button
               type="button"
               className="btn-outline"
@@ -1668,6 +1671,9 @@ export function App() {
         onConfirm={handleConfirmLogout}
         isLoading={logoutLoading}
       />
+
+      {/* Offline Connectivity Toast Indicator */}
+      <OfflineIndicator />
     </div>
   );
 }

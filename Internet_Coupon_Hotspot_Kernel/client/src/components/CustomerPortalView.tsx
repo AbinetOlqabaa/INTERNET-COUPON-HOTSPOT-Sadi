@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { PWAInstallButton } from './PWAInstallButton.js';
+import { OfflineIndicator } from './OfflineIndicator.js';
 
 const API = import.meta.env.VITE_API_BASE_URL ?? '';
 
@@ -143,10 +145,14 @@ export function CustomerPortalView({ ownerId, businessName, onFeedback }: Custom
       >
         <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>📶</span>
         <h2 style={{ margin: '0 0 0.25rem 0', fontSize: '1.5rem' }}>{businessName || 'Hotspot Wi-Fi Portal'}</h2>
-        <p style={{ margin: 0, opacity: 0.85, fontSize: '0.9rem' }}>
+        <p style={{ margin: '0 0 1rem 0', opacity: 0.85, fontSize: '0.9rem' }}>
           Customer Self-Service Internet Access &amp; Voucher Portal
         </p>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <PWAInstallButton compact />
+        </div>
       </div>
+      <OfflineIndicator />
 
       {/* ACTIVE SESSION CARD */}
       {activeSession ? (

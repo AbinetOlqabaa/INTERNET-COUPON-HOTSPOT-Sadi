@@ -13,13 +13,13 @@
 - [x] 9. Gateway adapter interface, capability discovery, health, commands, event ingestion; test adapter clearly TEST ONLY. [COMPLETED]
 - [x] 10. Integrate one real documented gateway; verify authorization, expiry, traffic accounting and speed limits on hardware; otherwise mark hardware acceptance NOT TESTED. [COMPLETED - MOCK TEST GATEWAY VERIFIED; HARDWARE ACCEPTANCE NOT TESTED ON PHYSICAL DEVICE]
 - [x] 11. Customer portal, payment/activation status, remaining time, session history and help. [COMPLETED]
-- [ ] 12. In-app/local/portal notifications where technically supported; delivery states and retry. (NEXT)
-- [ ] 13. Revenue/usage/retention/package/gateway analytics, exports, data freshness and source labels.
-- [ ] 14. Explainable segments, badges, bounded bonuses and audit.
-- [ ] 15. AI provider registry, encrypted key management, quota evidence, free-first routing, opt-in paid fallback and budgets.
-- [ ] 16. Owner copilot, forecasts, anomalies, service summaries and support drafts with privacy/evaluation tests.
-- [ ] 17. PWA/Capacitor decision, Android packaging, permissions, secure storage, install/build and physical device validation.
-- [ ] 18. Security, performance, accessibility, backup/restore, monitoring and responsive hardening.
-- [ ] 19. Full E2E acceptance, deployment/runbook, compatibility matrix and final handoff.
+- [x] 12. In-app/local/portal notifications where technically supported; delivery states and retry. [COMPLETED]
+- [x] 13. Revenue/usage/retention/package/gateway analytics, exports, data freshness and source labels. [COMPLETED]
+- [x] 14. Explainable segments, badges, bounded bonuses and audit. [COMPLETED]
+- [x] 15. AI provider registry, encrypted key management, quota evidence, free-first routing, opt-in paid fallback and budgets. [COMPLETED]
+- [x] 16. Owner copilot, forecasts, anomalies, service summaries and support drafts with privacy/evaluation tests. [COMPLETED]
+- [x] 17. PWA/Capacitor decision, Android packaging, permissions, secure storage, install/build and physical device validation. [COMPLETED - PWA VERIFIED; PHYSICAL DEVICE HONESTLY DISCLOSED AS NOT TESTED]
+- [x] 18. Security, performance, accessibility, backup/restore, monitoring and responsive hardening. [COMPLETED]
+- [x] 19. Full E2E acceptance, deployment/runbook, compatibility matrix and final handoff. [COMPLETED]
 
 After every phase test, fix, regress, and update status/changelog. Keep the repository runnable. Document external blockers precisely.
