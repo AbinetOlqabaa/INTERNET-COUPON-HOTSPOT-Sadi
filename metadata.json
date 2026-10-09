@@ -1,0 +1,6 @@
+{
+  "name": "Hotspot Project Kernel",
+  "description": "Minimal technical landing environment and full-stack project kernel for the Android-first Internet Coupon Hotspot application.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
