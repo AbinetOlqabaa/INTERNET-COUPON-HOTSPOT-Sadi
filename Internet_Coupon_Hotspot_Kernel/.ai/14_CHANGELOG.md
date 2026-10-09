@@ -11,6 +11,7 @@
     - Initial Password: `admin@123456`
     - Role: `SUPER_ADMIN`
   - Seeded automatically in `MemoryDatabase.seedPermanentAdmin()` and `AuthService.ensureDefaultAdmin()`.
+  - Credentials badge and hints removed from login UI; documented exclusively in `README.md` and security documentation to prevent public credential reconnaissance.
 - **In-Dashboard Credential & Profile Lifecycle**:
   - Implemented real-time email address and display name updates in Account Security (`PUT /api/v1/owner/profile` / `PATCH /api/v1/admin/users/:id`), with database email uniqueness enforcement.
   - Implemented password change (`POST /api/v1/auth/change-password`) requiring existing password verification, PBKDF2 hashing, session revocation, and security audit event logging.

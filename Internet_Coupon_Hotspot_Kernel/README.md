@@ -5,6 +5,13 @@ This is a minimal full-stack landing pad, not the complete application. It estab
 ## Important network limitation
 An ordinary Android application cannot universally control the system hotspot, disconnect individual clients, apply per-client speed limits, or obtain reliable per-client traffic accounting. Genuine enforcement requires a compatible managed gateway/router or a specifically supported privileged integration. Never simulate enforcement or claim it has happened without confirmation.
 
+## Administrator Credentials
+- **Email**: `administrator@hotspot.local`
+- **Password**: `admin@123456`
+- **Role**: `SUPER_ADMIN`
+
+*(Credentials are removed from the public login screen for security and can be updated from the Admin Dashboard > Account Security tab).*
+
 ## Run
 Requires Node.js 20+ and npm. In two terminals:
 

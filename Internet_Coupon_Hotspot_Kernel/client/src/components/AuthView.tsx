@@ -210,30 +210,6 @@ export function AuthView({ apiBase, onAuthSuccess }: AuthViewProps) {
               </div>
             </div>
 
-            {/* Permanent Admin Credentials Indicator */}
-            <div
-              style={{
-                marginBottom: '1rem',
-                padding: '0.65rem 0.85rem',
-                background: 'var(--color-bg)',
-                borderRadius: '0.5rem',
-                border: '1px solid var(--color-border)',
-                fontSize: '0.78rem',
-                color: 'var(--color-muted)',
-                lineHeight: 1.45,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '0.2rem' }}>
-                <span>🛡️</span>
-                <span>Permanent Administrator Access</span>
-              </div>
-              <div>Email: <strong style={{ color: 'var(--color-brand-secondary)', userSelect: 'all' }}>administrator@hotspot.local</strong></div>
-              <div>Password: <strong style={{ color: 'var(--color-brand-secondary)', userSelect: 'all' }}>admin@123456</strong></div>
-              <div style={{ fontSize: '0.72rem', marginTop: '0.25rem', color: 'var(--color-muted)' }}>
-                You can change and update these credentials after signing in to the Admin Dashboard.
-              </div>
-            </div>
-
             <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.5rem' }} disabled={loading}>
               {loading ? 'Authenticating...' : 'Sign In'}
             </button>

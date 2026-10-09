@@ -2,6 +2,17 @@
 
 Production-oriented full-stack platform for the Android-first Internet Coupon Hotspot management system.
 
+## Administrator Access & Credentials
+
+Permanent administrator credentials are pre-seeded at server startup for initial deployment and system management:
+
+- **Email**: `administrator@hotspot.local`
+- **Password**: `admin@123456`
+- **Role**: `SUPER_ADMIN`
+
+> **Security & Operational Notice**:
+> For security best practices, the administrator bootstrap mechanism and default credentials have been removed from the public login screen to prevent unauthorized access or credential disclosure. Administrators should sign in with these credentials and update their email and password immediately from the Admin Dashboard (**Account Security** tab).
+
 ---
 
 ## Technical Stack & Architecture
