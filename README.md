@@ -1,59 +1,91 @@
-# Hotspot Project Kernel
+# Internet Coupon Hotspot — Full-Stack Application
 
-Minimal, production-oriented technical landing environment for the proposed Android-first Internet Coupon Hotspot application.
+Production-oriented full-stack platform for the Android-first Internet Coupon Hotspot management system.
 
-## Purpose
+---
 
-This project establishes a clean, stable technical landing environment designed to receive the separately prepared `.ai` instruction pack. It confirms basic frontend/backend runtime plumbing and provides a clean foundation for subsequent autonomous development phases.
+## Technical Stack & Architecture
 
-## Technology Stack
+- **Client SPA (`Internet_Coupon_Hotspot_Kernel/client`)**: React 19, TypeScript, centralized CSS design tokens (`theme.css`), responsive layouts (`styles.css`), Vite 6.
+- **API Monolith (`Internet_Coupon_Hotspot_Kernel/server`)**: Node.js 22, Express 4.x, TypeScript, Helmet security headers, CORS, Zod validation, PBKDF2/SHA-512 authentication, general ledger accounting.
+- **Unified Server Runtime (`server.ts`)**: Single entry point running on port 3000. Delegates `/api/*` to the Express backend and integrates Vite middleware in development (serving static bundle in production).
+- **Target Platform Compatibility**: Android mobile & tablet responsive layout, touch targets, and viewport metadata configured for hybrid packaging (Capacitor/PWA).
 
-- **Frontend**: React 19, TypeScript, Tailwind CSS, Lucide icons
-- **Build Tool**: Vite 8
-- **Backend Runtime**: Node.js 22+, Express 4
-- **Dev Runner**: `tsx` (running Express server mounting Vite middleware on port 3000)
+---
 
-## Project Structure
+## Implemented Subsystems & Capabilities
 
+1. **Authentication & Session Management**:
+   - Cryptographic PBKDF2/SHA-512 password hashing with random salt and timing-safe comparison.
+   - Bearer session tokens with immediate revocation on logout or password change.
+   - Progressive anti-automation lockout (15 minutes after 5 consecutive failed logins).
+   - Password lifecycle: authenticated change, non-enumerating forgot-password, 15-minute single-use reset token validation.
+   - Initial administrator bootstrap (`POST /api/v1/admin/bootstrap`).
+
+2. **Multi-User & Role-Based Access Control (RBAC)**:
+   - Four distinct account tiers: `SUPER_ADMIN`, `OWNER`, `STAFF`, `CUSTOMER`.
+   - Server-side role enforcement middleware (`createRoleMiddleware`).
+   - Safeguards preventing deactivation, demotion, or deletion of the last active `SUPER_ADMIN`.
+   - Administrator console: user search, filtering by role/status, pagination, account activation/deactivation.
+
+3. **Customers & Privacy Consent**:
+   - Customer registration with consent parameters and device MAC address tracking (`/api/v1/customers`).
+   - Multi-field search (phone, name, MAC) and pagination.
+
+4. **Access Packages & Voucher Engine**:
+   - Time-based internet packages with integer minor unit pricing and duration seconds (`/api/v1/packages`).
+   - Voucher code generation with uppercase normalization, usage limits, and expiration bounds (`/api/v1/coupons`).
+   - Public customer voucher redemption validator (`POST /api/v1/coupons/validate`).
+
+5. **Payments, Counter Cash Desk & General Ledger**:
+   - `SandboxPaymentAdapter` and `ManualCashPaymentAdapter`.
+   - Replay-protected HMAC-SHA256 signed webhooks (`POST /api/v1/payments/webhooks/:provider`) with 300-second timestamp tolerance.
+   - Idempotency key protection on payment intent creation (HTTP 409 on conflict).
+   - Counter cash desk produces tamper-evident receipts (`CASH-YYYYMMDD-XXXXXX`), advances session to `payment_verified`, and posts ledger entry.
+   - Double-entry general ledger with sales, refunds, adjustments, and automated reconciliation (`GET /api/v1/payments/reconcile`).
+
+6. **Network Reality Disclosures**:
+   - Honest capability matrix: disclosures state that standard Android system hotspot mode cannot enforce per-client disconnections or traffic quotas without managed gateway hardware.
+
+---
+
+## Verified Commands & Execution
+
+### Run Full-Stack Development Server
+```bash
+npm run dev
 ```
-├── .env.example        # Environment variable definitions
-├── index.html          # HTML entry point with metadata
-├── metadata.json       # Applet configuration metadata
-├── package.json        # Dependencies and lifecycle scripts
-├── server.ts           # Express entry point & /api/health endpoint
-├── src/
-│   ├── App.tsx         # Responsive kernel status & health check UI
-│   ├── index.css       # Tailwind CSS import
-│   └── main.tsx        # React client entry point
-├── tsconfig.json       # TypeScript compiler configuration
-├── vite.config.ts      # Vite bundler configuration
-└── README.md           # Technical documentation and verification guide
+Starts unified server on `http://0.0.0.0:3000`.
+
+### Run Test Suites
+```bash
+npm test
+```
+Executes all 57 unit and integration tests across 12 suites (11 server suites, 1 client suite).
+
+### TypeScript Typecheck
+```bash
+npm run lint
+```
+Executes `tsc --noEmit` across the codebase (0 errors).
+
+### Build Production Bundle
+```bash
+npm run build
+```
+Compiles and bundles the client application into `/dist`.
+
+### Production Execution
+```bash
+npm run start
 ```
 
-## Available Scripts
+---
 
-- `npm install`: Install dependencies
-- `npm run dev`: Launch the full-stack dev server (`tsx server.ts` on port 3000)
-- `npm run build`: Compile the production frontend bundle into `dist/`
-- `npm run lint`: Run TypeScript typecheck without emit (`tsc --noEmit`)
-- `npm start`: Launch the production server (`node server.ts`)
+## Health & Diagnostic Endpoints
 
-## Verification Steps
-
-1. **Type Checking**:
-   ```bash
-   npm run lint
-   ```
-2. **Production Build**:
-   ```bash
-   npm run build
-   ```
-3. **Health Endpoint**:
-   ```bash
-   curl http://localhost:3000/api/health
-   ```
-   Returns JSON indicating service health, timestamp, and runtime info.
-
-## Critical Notice
-
-Application business logic (customer management, coupon generation, payment processing, hotspot gateway integration, etc.) is strictly omitted in this kernel and will be directed exclusively by the uploaded `.ai` instruction pack.
+- `GET /api/health`: Kernel diagnostic health monitor.
+- `GET /api/v1/health`: API subsystem capability matrix.
+- `GET /api/v1`: Root module registry.
+- `GET /api/v1/admin/overview`: System and account telemetry.
+- `GET /api/v1/admin/ai/insights`: Privacy-preserving operational AI insights.
