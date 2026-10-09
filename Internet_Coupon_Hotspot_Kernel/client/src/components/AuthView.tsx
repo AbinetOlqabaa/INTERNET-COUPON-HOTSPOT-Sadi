@@ -379,20 +379,13 @@ export function AuthView({ apiBase, onAuthSuccess }: AuthViewProps) {
         {/* Footer Navigation */}
         <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--color-border)', textAlign: 'center', fontSize: '0.85rem' }}>
           {mode === 'login' ? (
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <button
                 type="button"
                 onClick={() => { clearForm(); setMode('register'); }}
                 style={{ background: 'none', border: 'none', color: 'var(--color-brand-secondary)', cursor: 'pointer', fontWeight: 600 }}
               >
                 Register as Owner
-              </button>
-              <button
-                type="button"
-                onClick={() => { clearForm(); setMode('forgot'); }}
-                style={{ background: 'none', border: 'none', color: 'var(--color-muted)', cursor: 'pointer' }}
-              >
-                Forgot Password?
               </button>
             </div>
           ) : (
