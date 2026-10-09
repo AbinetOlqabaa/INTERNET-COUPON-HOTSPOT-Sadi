@@ -28,13 +28,20 @@ The application models distinct account tiers:
    - End-user connected to the captive portal to purchase packages or redeem coupons.
    - Accesses only their personal session timers.
 
-## 3. Initial Administrator Bootstrap
-- Username / identifier: `admin@hotspot.local` (or operator custom email).
-- Execution Endpoint: `POST /api/v1/admin/bootstrap`.
-- Security Constraints:
-  - Allowed when zero active `SUPER_ADMIN` accounts exist in the database, OR when the secret `ADMIN_BOOTSTRAP_TOKEN` matches.
-  - Automatically locks permanently after the initial administrator is created.
-  - Writes an `admin.bootstrapped` audit log event without logging credentials.
+## 3. Permanent Administrator Credentials & Closed Bootstrap
+- **Primary Super Administrator Account**:
+  - Email: `administrator@hotspot.local`
+  - Default Password: `admin@123456`
+  - Role: `SUPER_ADMIN`
+  - Seeded automatically on startup in persistent database/repositories.
+- **Login Page Hardening**:
+  - "Admin Bootstrap" has been removed from the public login screen to prevent credential compromise or unauthorized initialization attempts.
+  - Normal authentication flow (`POST /api/v1/auth/login`) is used by both administrators and owners.
+- **In-Dashboard Credential & Profile Updates**:
+  - Administrators can update their account password (`POST /api/v1/auth/change-password`) after logging into the admin dashboard under Account Security.
+  - Administrators can update their email address and display name (`PUT /api/v1/owner/profile` / `PATCH /api/v1/admin/users/:id`), with strict uniqueness validation.
+- **Bootstrap Lockdown**:
+  - The endpoint `POST /api/v1/admin/bootstrap` remains locked and rejects unauthenticated requests with `BOOTSTRAP_FAILED` ("System already initialized. Administrator bootstrap is closed.").
 
 ## 4. Password Lifecycle & Anti-Automation Protection
 - **Change Password**: Requires current password verification and validates new password (minimum 8 characters). Invalidates all existing sessions upon change.

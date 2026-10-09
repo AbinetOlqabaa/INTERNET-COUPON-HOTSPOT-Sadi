@@ -473,6 +473,38 @@ export function App() {
     }
   };
 
+  const [profileEmail, setProfileEmail] = useState('');
+  const [profileDisplayName, setProfileDisplayName] = useState('');
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setProfileEmail(user.email || '');
+      setProfileDisplayName(user.displayName || '');
+    }
+  }, [user]);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token) return;
+    setProfileLoading(true);
+    try {
+      const res = await fetch(`${API}/api/v1/owner/profile`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ email: profileEmail, displayName: profileDisplayName }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || 'Failed to update profile');
+      setUser(data.profile);
+      setFeedback({ message: 'Account profile and email updated successfully.', type: 'success' });
+    } catch (err: unknown) {
+      setFeedback({ message: err instanceof Error ? err.message : 'Error updating profile', type: 'error' });
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
@@ -1609,9 +1641,62 @@ export function App() {
             </div>
           )}
 
-          {/* TAB 8: SECURITY & PASSWORD CHANGE */}
+          {/* TAB 8: SECURITY & CREDENTIALS */}
           {activeTab === 'security' && (
-            <div style={{ maxWidth: '480px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.5rem', maxWidth: '1000px' }}>
+              {/* Card 1: Account Profile & Email Credentials */}
+              <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-card)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-card)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <h3 style={{ margin: 0 }}>Administrator Profile &amp; Email</h3>
+                  <span className={`badge ${user.role === 'SUPER_ADMIN' ? 'badge-super-admin' : user.role === 'OWNER' ? 'badge-owner' : 'badge-staff'}`}>
+                    {user.role}
+                  </span>
+                </div>
+                <p style={{ color: 'var(--color-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+                  Update your primary email address and display name. This email is used to log in to the administrative dashboard.
+                </p>
+
+                <form onSubmit={handleUpdateProfile}>
+                  <div className="form-group">
+                    <label className="form-label">Email Address (Login Identifier)</label>
+                    <input
+                      type="email"
+                      className="form-input"
+                      value={profileEmail}
+                      onChange={(e) => setProfileEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Full Name / Display Name</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={profileDisplayName}
+                      onChange={(e) => setProfileDisplayName(e.target.value)}
+                      placeholder="System Administrator"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Business / Organization</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={user.businessName || 'Hotspot Administration'}
+                      disabled
+                      style={{ background: 'var(--color-bg)', opacity: 0.8 }}
+                    />
+                  </div>
+
+                  <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.5rem' }} disabled={profileLoading}>
+                    {profileLoading ? 'Updating Profile...' : 'Save Account Details'}
+                  </button>
+                </form>
+              </div>
+
+              {/* Card 2: Change Account Password */}
               <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-card)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-card)' }}>
                 <h3 style={{ margin: '0 0 0.5rem 0' }}>Change Account Password</h3>
                 <p style={{ color: 'var(--color-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>

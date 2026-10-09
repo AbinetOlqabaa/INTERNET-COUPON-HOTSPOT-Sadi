@@ -46,6 +46,11 @@ export const loyaltyService = new LoyaltyService(defaultDb);
 export const aiService = new AIService(defaultDb);
 export const authMiddleware = createAuthMiddleware(authService, defaultDb);
 
+// Guarantee permanent administrator is seeded on server start
+authService.ensureDefaultAdmin().catch((err) => {
+  if (process.env.NODE_ENV !== 'test') console.warn('Permanent admin initialization note:', err);
+});
+
 app.disable('x-powered-by');
 app.use(helmet());
 app.use(cors({ origin: env.CORS_ORIGIN.split(',').map((x) => x.trim()) }));

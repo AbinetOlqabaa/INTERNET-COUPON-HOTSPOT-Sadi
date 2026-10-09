@@ -8,6 +8,13 @@ export interface SessionToken {
   expiresAt: number; // Unix epoch ms
 }
 
+export const DEFAULT_ADMIN_CREDENTIALS = {
+  email: 'administrator@hotspot.local',
+  password: 'admin@123456',
+  displayName: 'System Administrator',
+  businessName: 'Hotspot Administration',
+} as const;
+
 interface FailedAttemptTracker {
   count: number;
   lastAttempt: number;
@@ -76,7 +83,38 @@ export class AuthService {
     this.failedAttempts.delete(identifier.toLowerCase());
   }
 
-  // Initial Administrator Bootstrap
+  // Permanent Administrator Initializer
+  async ensureDefaultAdmin(): Promise<OwnerEntity> {
+    const normalizedEmail = DEFAULT_ADMIN_CREDENTIALS.email.toLowerCase();
+    const existing = await this.db.owners.findByEmail(normalizedEmail);
+    if (existing) {
+      return existing;
+    }
+
+    const passwordHash = this.hashPassword(DEFAULT_ADMIN_CREDENTIALS.password);
+    const adminUser = await this.db.owners.create({
+      email: normalizedEmail,
+      passwordHash,
+      businessName: DEFAULT_ADMIN_CREDENTIALS.businessName,
+      displayName: DEFAULT_ADMIN_CREDENTIALS.displayName,
+      role: 'SUPER_ADMIN',
+      defaultCurrency: 'USD',
+      isActive: true,
+    });
+
+    await this.db.audit.append({
+      ownerId: adminUser.id,
+      actor: 'system',
+      action: 'admin.seeded_permanent',
+      resourceType: 'system',
+      resourceId: adminUser.id,
+      details: { email: adminUser.email, role: 'SUPER_ADMIN' },
+    });
+
+    return adminUser;
+  }
+
+  // Initial Administrator Bootstrap (Closed when default SUPER_ADMIN exists)
   async bootstrapAdmin(params: {
     email: string;
     password: string;

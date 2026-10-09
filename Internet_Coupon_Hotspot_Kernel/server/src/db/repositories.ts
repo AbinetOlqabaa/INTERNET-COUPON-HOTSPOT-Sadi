@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID, pbkdf2Sync } from 'node:crypto';
 import type {
   OwnerEntity,
   UserRole,
@@ -913,6 +913,42 @@ export class MemoryDatabase implements RepositoryRegistry {
       return this.aiProvidersMap.delete(id);
     },
   };
+
+  /**
+   * Seeds the permanent administrator credentials:
+   * Email: administrator@hotspot.local
+   * Password: admin@123456
+   */
+  seedPermanentAdmin(): OwnerEntity {
+    const existing = Array.from(this.ownersMap.values()).find(
+      (o) => o.email.toLowerCase() === 'administrator@hotspot.local'
+    );
+    if (existing) return existing;
+
+    const now = new Date().toISOString();
+    const admin: OwnerEntity = {
+      id: 'admin-permanent-super-001',
+      email: 'administrator@hotspot.local',
+      passwordHash: computePbkdf2Hash('admin@123456'),
+      businessName: 'Hotspot Administration',
+      displayName: 'System Administrator',
+      role: 'SUPER_ADMIN',
+      defaultCurrency: 'USD',
+      isActive: true,
+      ownerId: null,
+      lastLoginAt: null,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.ownersMap.set(admin.id, admin);
+    return admin;
+  }
+}
+
+export function computePbkdf2Hash(password: string, salt: string = '4f8e2a1b9c3d7e5f6a0b1c2d3e4f5a6b'): string {
+  const hash = pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+  return `${salt}:${hash}`;
 }
 
 export const defaultDb = new MemoryDatabase();
+defaultDb.seedPermanentAdmin();

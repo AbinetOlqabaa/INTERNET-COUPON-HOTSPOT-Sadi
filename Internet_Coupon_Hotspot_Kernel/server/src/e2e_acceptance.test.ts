@@ -31,6 +31,7 @@ describe('Phase 19: Full End-to-End Acceptance Journey', () => {
 
   beforeEach(() => {
     db = new MemoryDatabase();
+    db.seedPermanentAdmin();
     authService = new AuthService(db);
     gatewayService = new GatewayService(db);
     sessionService = new SessionService(db, gatewayService);
@@ -55,19 +56,18 @@ describe('Phase 19: Full End-to-End Acceptance Journey', () => {
     app.use('/api/v1/loyalty', createLoyaltyRouter(loyaltyService, authMiddleware));
   });
 
-  it('executes the complete operational lifecycle from bootstrap to audit reconciliation', async () => {
-    // 1. First-Run Administrator Bootstrap
-    const bootRes = await request(app)
-      .post('/api/v1/admin/bootstrap')
+  it('executes the complete operational lifecycle from permanent admin to audit reconciliation', async () => {
+    // 1. Permanent Administrator Authentication & Closed Bootstrap Verification
+    const adminLoginRes = await request(app)
+      .post('/api/v1/auth/login')
       .send({
-        email: 'root@hotspot.org',
-        password: 'SuperAdminMasterPassword123!',
-        displayName: 'Root Administrator',
+        email: 'administrator@hotspot.local',
+        password: 'admin@123456',
       });
-    expect(bootRes.status).toBe(201);
-    expect(bootRes.body.user.role).toBe('SUPER_ADMIN');
+    expect(adminLoginRes.status).toBe(200);
+    expect(adminLoginRes.body.owner.role).toBe('SUPER_ADMIN');
 
-    // Subsequent bootstrap attempt must fail permanently
+    // Subsequent bootstrap attempt must fail permanently because system is already initialized
     const boot2 = await request(app)
       .post('/api/v1/admin/bootstrap')
       .send({ email: 'hacker@hotspot.org', password: 'Password123!' });

@@ -1,5 +1,23 @@
 # Changelog and Evidence
 
+## Permanent Administrator Credentials & Login Hardening (Completed)
+- **Eliminated Public Admin Bootstrap Vulnerability**:
+  - Removed "Admin Bootstrap" mode and buttons completely from the login screen (`client/src/components/AuthView.tsx`).
+  - Switched public login interface to standard owner/operator authentication (`POST /api/v1/auth/login`) with links for Owner Registration and Password Recovery.
+  - Locked public bootstrap endpoint (`POST /api/v1/admin/bootstrap`), permanently rejecting unauthenticated initialization requests with `BOOTSTRAP_FAILED`.
+- **Permanent Administrator Credentials**:
+  - Assigned and automatically seeded primary Super Administrator on startup:
+    - Identifier: `administrator@hotspot.local`
+    - Initial Password: `admin@123456`
+    - Role: `SUPER_ADMIN`
+  - Seeded automatically in `MemoryDatabase.seedPermanentAdmin()` and `AuthService.ensureDefaultAdmin()`.
+- **In-Dashboard Credential & Profile Lifecycle**:
+  - Implemented real-time email address and display name updates in Account Security (`PUT /api/v1/owner/profile` / `PATCH /api/v1/admin/users/:id`), with database email uniqueness enforcement.
+  - Implemented password change (`POST /api/v1/auth/change-password`) requiring existing password verification, PBKDF2 hashing, session revocation, and security audit event logging.
+- **Verification & Test Evidence**:
+  - Built dedicated test suite `server/src/admin/permanent_admin.test.ts` (4 tests).
+  - Total test count: **100 / 100 tests passing across 21 test suites** in vitest.
+
 ## Phase 17, 18 & 19 — PWA Installability, Hardening & Full E2E Acceptance (Completed)
 - Built Progressive Web App (PWA) Foundation & Installability (`client/public/`, `client/src/components/`):
   - Created Web App Manifests (`manifest.webmanifest`, `manifest.json`) with `id: '/'`, `short_name: 'Hotspot'`, `display: 'standalone'`, theme colors, and dual purpose (`any` & `maskable` safe-zone) SVG icons.

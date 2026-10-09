@@ -1,6 +1,19 @@
 # Current Implementation Status
 
-Checkpoint: All Phases (Phases 0–19) Fully Implemented and Verified with 96/96 passing tests across 20 test suites, zero TypeScript errors, clean production builds, and honest hardware disclosures.
+Checkpoint: All Phases (Phases 0–19) Fully Implemented and Verified with 100/100 passing tests across 21 test suites, zero TypeScript errors, clean production builds, permanent administrator credentials (`administrator@hotspot.local`), and honest hardware disclosures.
+
+- Hardening Update (Permanent Administrator Credentials & Login Bootstrap Removal):
+  - Removed "Admin Bootstrap" from public login screen (`client/src/components/AuthView.tsx`) to eliminate risk of credential compromise.
+  - Assigned and seeded permanent super administrator credential:
+    - Identifier: `administrator@hotspot.local`
+    - Password: `admin@123456`
+    - Role: `SUPER_ADMIN`
+    - Seeded automatically on startup (`repositories.ts` / `AuthService.ensureDefaultAdmin()`).
+  - Implemented in-dashboard Account Profile & Credential Management in Security tab (`client/src/App.tsx`):
+    - Real-time email address and display name updates (`PUT /api/v1/owner/profile`, `PATCH /api/v1/admin/users/:id`) with email uniqueness conflict protection.
+    - Password change (`POST /api/v1/auth/change-password`) with PBKDF2 hashing, session revocation, and audit logging.
+  - Locked public bootstrap endpoint (`POST /api/v1/admin/bootstrap`), permanently rejecting unauthenticated initialization requests.
+  - Verified with dedicated test suite (`server/src/admin/permanent_admin.test.ts`, 4 tests). [IMPLEMENTED, UNIT-TESTED, E2E-TESTED, ALL PASSING]
 
 - Phase 19 (Full End-to-End Acceptance Journey & Deployment Runbook):
   - Complete operational lifecycle verified end-to-end (`server/src/e2e_acceptance.test.ts`): First-run SuperAdmin bootstrap → Hotspot Owner registration & authentication → 2-Hour Pass access package creation → Voucher issuance (`FLIGHT2HR`) → Customer captive portal voucher redemption with MAC binding → Real-time session activation → Walk-in customer cash desk payment with receipt generation → Session pause and resume cycle → Automated financial reconciliation & ledger balance verification → Analytics overview → Cross-tenant intruder isolation enforcement. [IMPLEMENTED, E2E-TESTED, ALL PASSING]
@@ -112,8 +125,9 @@ Checkpoint: All Phases (Phases 0–19) Fully Implemented and Verified with 96/96
   - Integer minor units, state machine transitions, gateway capability matrix, secret redaction. [IMPLEMENTED, UNIT-TESTED]
 
 - Tests & Tooling:
-  - Total test count: 96 passed across 20 test files [UNIT-TESTED, E2E-TESTED, ALL PASSING]
-    - `server/src/e2e_acceptance.test.ts` (1 test) — Full operational lifecycle
+  - Total test count: 100 passed across 21 test files [UNIT-TESTED, E2E-TESTED, ALL PASSING]
+    - `server/src/e2e_acceptance.test.ts` (1 test) — Full operational lifecycle from permanent admin to ledger reconciliation
+    - `server/src/admin/permanent_admin.test.ts` (4 tests) — Permanent administrator login, closed bootstrap, dashboard password change, and profile update
     - `server/src/sessions/sessions.test.ts` (10 tests)
     - `server/src/payments/payments.test.ts` (10 tests)
     - `server/src/admin/admin.test.ts` (6 tests)

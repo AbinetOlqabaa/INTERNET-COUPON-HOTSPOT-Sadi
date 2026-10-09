@@ -5,7 +5,7 @@ interface AuthViewProps {
   onAuthSuccess: (token: string, user: any) => void;
 }
 
-type AuthMode = 'login' | 'register' | 'forgot' | 'reset' | 'bootstrap';
+type AuthMode = 'login' | 'register' | 'forgot' | 'reset';
 
 export function AuthView({ apiBase, onAuthSuccess }: AuthViewProps) {
   const [mode, setMode] = useState<AuthMode>('login');
@@ -119,26 +119,6 @@ export function AuthView({ apiBase, onAuthSuccess }: AuthViewProps) {
     }
   };
 
-  const handleBootstrap = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`${apiBase}/api/v1/admin/bootstrap`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, displayName: displayName || 'Super Administrator' }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error?.message || 'Bootstrap failed');
-      onAuthSuccess(data.token, data.user);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Bootstrap failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div style={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', padding: '1.5rem', background: 'var(--color-bg)' }}>
       <div
@@ -161,14 +141,12 @@ export function AuthView({ apiBase, onAuthSuccess }: AuthViewProps) {
             {mode === 'register' && 'Register Hotspot Business'}
             {mode === 'forgot' && 'Reset Forgotten Password'}
             {mode === 'reset' && 'Set New Password'}
-            {mode === 'bootstrap' && 'Initial Administrator Bootstrap'}
           </h2>
           <p style={{ color: 'var(--color-muted)', fontSize: '0.85rem', margin: 0 }}>
             {mode === 'login' && 'Enter your credentials to manage packages, coupons, and access.'}
             {mode === 'register' && 'Create your owner tenant account with full operational controls.'}
             {mode === 'forgot' && 'Enter your account email to receive recovery instructions.'}
             {mode === 'reset' && 'Enter the single-use token and choose your new password.'}
-            {mode === 'bootstrap' && 'Initialize the primary SUPER_ADMIN system account.'}
           </p>
         </div>
 
@@ -229,6 +207,30 @@ export function AuthView({ apiBase, onAuthSuccess }: AuthViewProps) {
                 >
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
+              </div>
+            </div>
+
+            {/* Permanent Admin Credentials Indicator */}
+            <div
+              style={{
+                marginBottom: '1rem',
+                padding: '0.65rem 0.85rem',
+                background: 'var(--color-bg)',
+                borderRadius: '0.5rem',
+                border: '1px solid var(--color-border)',
+                fontSize: '0.78rem',
+                color: 'var(--color-muted)',
+                lineHeight: 1.45,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '0.2rem' }}>
+                <span>🛡️</span>
+                <span>Permanent Administrator Access</span>
+              </div>
+              <div>Email: <strong style={{ color: 'var(--color-brand-secondary)', userSelect: 'all' }}>administrator@hotspot.local</strong></div>
+              <div>Password: <strong style={{ color: 'var(--color-brand-secondary)', userSelect: 'all' }}>admin@123456</strong></div>
+              <div style={{ fontSize: '0.72rem', marginTop: '0.25rem', color: 'var(--color-muted)' }}>
+                You can change and update these credentials after signing in to the Admin Dashboard.
               </div>
             </div>
 
@@ -398,51 +400,6 @@ export function AuthView({ apiBase, onAuthSuccess }: AuthViewProps) {
           </form>
         )}
 
-        {/* BOOTSTRAP INITIAL SUPER_ADMIN FORM */}
-        {mode === 'bootstrap' && (
-          <form onSubmit={handleBootstrap}>
-            <div className="form-group">
-              <label className="form-label">Admin Full Name</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="System Lead"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Admin Email</label>
-              <input
-                type="email"
-                className="form-input"
-                placeholder="admin@hotspot.local"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Admin Master Password (min 8 characters)</label>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                className="form-input"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                minLength={8}
-                required
-              />
-            </div>
-
-            <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.5rem' }} disabled={loading}>
-              {loading ? 'Bootstrapping Admin...' : 'Initialize SUPER_ADMIN Account'}
-            </button>
-          </form>
-        )}
-
         {/* Footer Navigation */}
         <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--color-border)', textAlign: 'center', fontSize: '0.85rem' }}>
           {mode === 'login' ? (
@@ -456,10 +413,10 @@ export function AuthView({ apiBase, onAuthSuccess }: AuthViewProps) {
               </button>
               <button
                 type="button"
-                onClick={() => { clearForm(); setMode('bootstrap'); }}
+                onClick={() => { clearForm(); setMode('forgot'); }}
                 style={{ background: 'none', border: 'none', color: 'var(--color-muted)', cursor: 'pointer' }}
               >
-                Admin Bootstrap
+                Forgot Password?
               </button>
             </div>
           ) : (

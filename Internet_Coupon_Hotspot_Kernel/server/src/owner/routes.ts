@@ -21,6 +21,8 @@ export function createOwnerRouter(db: RepositoryRegistry): Router {
 
   // PUT /api/v1/owner/profile
   const UpdateProfileSchema = z.object({
+    email: z.string().email().optional(),
+    displayName: z.string().min(1).max(120).optional(),
     businessName: z.string().min(1).max(120).optional(),
     defaultCurrency: CurrencyCodeSchema.optional(),
   });
@@ -35,6 +37,19 @@ export function createOwnerRouter(db: RepositoryRegistry): Router {
         return;
       }
 
+      if (parsed.email) {
+        const normalizedEmail = parsed.email.trim().toLowerCase();
+        if (normalizedEmail !== owner.email.toLowerCase()) {
+          const existing = await db.owners.findByEmail(normalizedEmail);
+          if (existing && existing.id !== ownerId) {
+            res.status(400).json({ error: { code: 'EMAIL_EXISTS', message: 'An account with this email already exists.' } });
+            return;
+          }
+          owner.email = normalizedEmail;
+        }
+      }
+
+      if (parsed.displayName !== undefined) owner.displayName = parsed.displayName;
       if (parsed.businessName) owner.businessName = parsed.businessName;
       if (parsed.defaultCurrency) owner.defaultCurrency = parsed.defaultCurrency;
       owner.updatedAt = new Date().toISOString();

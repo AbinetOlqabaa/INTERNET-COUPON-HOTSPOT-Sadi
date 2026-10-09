@@ -161,6 +161,7 @@ export function createAdminRouter(
 
   // PATCH /api/v1/admin/users/:id - Update user
   const PatchUserSchema = z.object({
+    email: z.string().email().optional(),
     displayName: z.string().min(1).max(120).optional(),
     businessName: z.string().min(1).max(120).optional(),
     role: UserRoleSchema.optional(),
@@ -176,6 +177,16 @@ export function createAdminRouter(
           error: { code: 'FORBIDDEN', message: 'Only SUPER_ADMIN can modify account roles.' },
         });
         return;
+      }
+
+      if (parsed.email) {
+        const normalizedEmail = parsed.email.trim().toLowerCase();
+        const existing = await db.owners.findByEmail(normalizedEmail);
+        if (existing && existing.id !== req.params.id) {
+          res.status(400).json({ error: { code: 'EMAIL_EXISTS', message: 'An account with this email already exists.' } });
+          return;
+        }
+        parsed.email = normalizedEmail;
       }
 
       const updated = await db.owners.update(req.params.id, parsed);
